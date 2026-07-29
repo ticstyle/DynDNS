@@ -105,9 +105,7 @@ class DynDNSSensor(
         return self._restored_state
 
 
-class DynDNSLastSuccessSensor(
-    CoordinatorEntity[DynDNSUpdateCoordinator], SensorEntity
-):
+class DynDNSLastSuccessSensor(CoordinatorEntity[DynDNSUpdateCoordinator], SensorEntity):
     """Representation of the last successful update timestamp sensor."""
 
     entity_description = TIMESTAMP_SENSOR_DESCRIPTION
@@ -139,4 +137,3 @@ class DynDNSLastSuccessSensor(
     def native_value(self) -> datetime | None:
         """Return UTC datetime of the last successful update."""
         return self.coordinator.last_success_time
-        
