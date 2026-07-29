@@ -13,7 +13,7 @@
 [![Mypy](https://img.shields.io/github/actions/workflow/status/ticstyle/DynDNS/pipeline.yml?branch=main&label=Mypy)](https://github.com/ticstyle/DynDNS/actions/workflows/pipeline.yml)
 ![Installs](https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=Known%20installs&url=https%3A%2F%2Fanalytics.home-assistant.io%2Fcustom_integrations.json&query=%24.dyndns.total)
 
-A custom integration to easily add DynDNS domain updates to your Home Assistant instance with the help of HACS.
+A custom integration to easily update your dynamic domains using DynDNS2-protocol using your Home Assistant instance with the help of HACS.
 
 To add this integration, please add the custom repository `https://github.com/ticstyle/DynDNS/` to HACS in your Home Assistant setup.
 
