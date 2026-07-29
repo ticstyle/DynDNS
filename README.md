@@ -33,3 +33,9 @@ To add this integration, please add the custom repository `https://github.com/ti
 [![](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=ticstyle&repository=DynDNS&category=Integration)
 
 Via [HACS](https://hacs.xyz/) or manually copy the `dyndns` folder from the [latest release](https://github.com/ticstyle/DynDNS/releases/latest) to the `custom_components` folder inside your Home Assistant configuration directory.
+
+## ⚙️ Configuration
+
+[![](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=dyndns)
+
+Add and adjust the integration via the Home Assistant User Interface.
