@@ -20,9 +20,10 @@ from .const import (
     CONF_HOSTNAME,
     CONF_PASSWORD,
     CONF_SERVER,
+    CONF_UPDATE_INTERVAL,
     CONF_USERNAME,
+    DEFAULT_UPDATE_INTERVAL_MINUTES,
     DOMAIN,
-    UPDATE_INTERVAL_MINUTES,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -47,6 +48,10 @@ class DynDNSUpdateCoordinator(DataUpdateCoordinator[str]):
         self.hostname: str = entry.data[CONF_HOSTNAME]
         self.username: str = entry.data[CONF_USERNAME]
         self.password: str = entry.data[CONF_PASSWORD]
+        update_interval_minutes: int = entry.data.get(
+            CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL_MINUTES
+        )
+
         self.last_ip: str | None = None
         self.last_success_time: datetime | None = None
         self.last_update_failed: bool = False
@@ -55,7 +60,7 @@ class DynDNSUpdateCoordinator(DataUpdateCoordinator[str]):
             hass,
             _LOGGER,
             name=f"DynDNS ({self.hostname})",
-            update_interval=timedelta(minutes=UPDATE_INTERVAL_MINUTES),
+            update_interval=timedelta(minutes=update_interval_minutes),
         )
 
     async def _async_update_data(self) -> str:
