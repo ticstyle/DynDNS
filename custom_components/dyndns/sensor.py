@@ -87,12 +87,15 @@ class DynDNSSensor(
         """Handle entity restored state when added to Home Assistant."""
         await super().async_added_to_hass()
 
-        # Restore last known state across reloads/restarts
-        if (last_state := await self.async_get_last_state()) is not None:
-            if last_state.state not in (None, "unknown", "unavailable"):
-                self._restored_state = last_state.state
-                if self.coordinator.data is None:
-                    self.coordinator.last_ip = last_state.state
+        last_state = await self.async_get_last_state()
+        if last_state is not None and last_state.state not in (
+            None,
+            "unknown",
+            "unavailable",
+        ):
+            self._restored_state = last_state.state
+            if self.coordinator.data is None:
+                self.coordinator.last_ip = last_state.state
 
     @property
     def native_value(self) -> str | None:
@@ -100,4 +103,40 @@ class DynDNSSensor(
         if self.coordinator.data is not None:
             return self.coordinator.data
         return self._restored_state
+
+
+class DynDNSLastSuccessSensor(
+    CoordinatorEntity[DynDNSUpdateCoordinator], SensorEntity
+):
+    """Representation of the last successful update timestamp sensor."""
+
+    entity_description = TIMESTAMP_SENSOR_DESCRIPTION
+    _attr_has_entity_name = True
+
+    def __init__(
+        self,
+        coordinator: DynDNSUpdateCoordinator,
+        entry: DynDNSConfigEntry,
+    ) -> None:
+        """Initialize the diagnostic timestamp sensor."""
+        super().__init__(coordinator)
+
+        hostname: str = entry.data[CONF_HOSTNAME]
+        formatted_domain = hostname.lower().replace(".", "_").replace("-", "_")
+
+        self.entity_id = f"sensor.dyndns_last_success_{formatted_domain}"
+        self._attr_unique_id = f"{entry.entry_id}_last_successful_update"
+        self._attr_name = "Last Successful Update"
+
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, entry.entry_id)},
+            name=hostname,
+            manufacturer="ticstyle",
+            model="DynDNS",
+        )
+
+    @property
+    def native_value(self) -> datetime | None:
+        """Return UTC datetime of the last successful update."""
+        return self.coordinator.last_success_time
         
