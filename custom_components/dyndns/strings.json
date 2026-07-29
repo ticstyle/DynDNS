@@ -1,1 +1,25 @@
- 
+# strins.json / en.json
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configure DynDNS Service",
+        "description": "Enter your DynDNS2 provider credentials and domain settings.",
+        "data": {
+          "server": "Server Host / Address",
+          "hostname": "Domain / Hostname",
+          "username": "Username / Login",
+          "password": "Password / Token"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to DynDNS server",
+      "invalid_auth": "Invalid authentication credentials",
+      "unknown": "Unexpected error occurred"
+    },
+    "abort": {
+      "already_configured": "This domain is already configured."
+    }
+  }
+}
