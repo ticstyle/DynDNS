@@ -61,12 +61,12 @@ class DynDNSStatusBinarySensor(
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
             name=hostname,
-            manufacturer="DynDNS Provider",
-            model="DynDNS2 Protocol",
+            manufacturer="ticstyle",
+            model="DynDNS",
         )
 
     @property
     def is_on(self) -> bool:
         """Return true if the last update failed (Problem detected)."""
         return self.coordinator.last_update_failed
-      
+        
