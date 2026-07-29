@@ -75,8 +75,8 @@ class DynDNSSensor(CoordinatorEntity[DynDNSUpdateCoordinator], SensorEntity):
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
             name=hostname,
-            manufacturer="DynDNS Provider",
-            model="DynDNS2 Protocol",
+            manufacturer="ticstyle",
+            model="DynDNS",
         )
 
     @property
@@ -85,9 +85,7 @@ class DynDNSSensor(CoordinatorEntity[DynDNSUpdateCoordinator], SensorEntity):
         return self.coordinator.data
 
 
-class DynDNSLastSuccessSensor(
-    CoordinatorEntity[DynDNSUpdateCoordinator], SensorEntity
-):
+class DynDNSLastSuccessSensor(CoordinatorEntity[DynDNSUpdateCoordinator], SensorEntity):
     """Representation of the last successful update timestamp sensor."""
 
     entity_description = TIMESTAMP_SENSOR_DESCRIPTION
@@ -111,12 +109,11 @@ class DynDNSLastSuccessSensor(
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
             name=hostname,
-            manufacturer="DynDNS Provider",
-            model="DynDNS2 Protocol",
+            manufacturer="ticstyle",
+            model="DynDNS",
         )
 
     @property
     def native_value(self) -> datetime | None:
         """Return UTC datetime of the last successful update."""
         return self.coordinator.last_success_time
-        

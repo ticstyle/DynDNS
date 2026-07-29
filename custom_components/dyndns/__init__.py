@@ -3,11 +3,10 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
 import logging
+from datetime import datetime, timedelta
 
 import aiohttp
-
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
@@ -20,9 +19,9 @@ from .const import (
     CONF_HOSTNAME,
     CONF_PASSWORD,
     CONF_SERVER,
+    CONF_UPDATE_INTERVAL,
     CONF_USERNAME,
-    DOMAIN,
-    UPDATE_INTERVAL_MINUTES,
+    DEFAULT_UPDATE_INTERVAL_MINUTES,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -47,6 +46,10 @@ class DynDNSUpdateCoordinator(DataUpdateCoordinator[str]):
         self.hostname: str = entry.data[CONF_HOSTNAME]
         self.username: str = entry.data[CONF_USERNAME]
         self.password: str = entry.data[CONF_PASSWORD]
+        update_interval_minutes: int = entry.data.get(
+            CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL_MINUTES
+        )
+
         self.last_ip: str | None = None
         self.last_success_time: datetime | None = None
         self.last_update_failed: bool = False
@@ -55,7 +58,7 @@ class DynDNSUpdateCoordinator(DataUpdateCoordinator[str]):
             hass,
             _LOGGER,
             name=f"DynDNS ({self.hostname})",
-            update_interval=timedelta(minutes=UPDATE_INTERVAL_MINUTES),
+            update_interval=timedelta(minutes=update_interval_minutes),
         )
 
     async def _async_update_data(self) -> str:
@@ -96,7 +99,9 @@ class DynDNSUpdateCoordinator(DataUpdateCoordinator[str]):
                 return text
         except aiohttp.ClientError as err:
             self.last_update_failed = True
-            raise UpdateFailed(f"Error communicating with DynDNS server: {err}") from err
+            raise UpdateFailed(
+                f"Error communicating with DynDNS server: {err}"
+            ) from err
         except Exception as err:
             self.last_update_failed = True
             raise UpdateFailed(f"Unexpected error: {err}") from err
@@ -115,7 +120,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: DynDNSConfigEntry) -> bo
 
 async def async_unload_entry(hass: HomeAssistant, entry: DynDNSConfigEntry) -> bool:
     """Unload a config entry."""
-    return await hass.config_entries.async_unload_entry(entry, PLATFORMS)
+    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 
 async def async_remove_config_entry_device(
@@ -123,4 +128,3 @@ async def async_remove_config_entry_device(
 ) -> bool:
     """Remove a device and purge config entry if device is deleted from UI."""
     return True
-    

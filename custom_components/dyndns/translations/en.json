@@ -3,12 +3,13 @@
     "step": {
       "user": {
         "title": "Configure DynDNS Service",
-        "description": "Enter your DynDNS2 provider credentials and domain settings.",
+        "description": "Enter your DynDNS2 provider credentials and update settings.",
         "data": {
           "server": "Server Host / Address",
           "hostname": "Domain / Hostname",
           "username": "Username / Login",
-          "password": "Password / Token"
+          "password": "Password / Token",
+          "update_interval": "Update Interval (Minutes)"
         }
       },
       "reconfigure": {
@@ -18,7 +19,8 @@
           "server": "Server Host / Address",
           "hostname": "Domain / Hostname",
           "username": "Username / Login",
-          "password": "Password / Token"
+          "password": "Password / Token",
+          "update_interval": "Update Interval (Minutes)"
         }
       }
     },
