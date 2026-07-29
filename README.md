@@ -13,7 +13,14 @@
 [![Mypy](https://img.shields.io/github/actions/workflow/status/ticstyle/DynDNS/pipeline.yml?branch=main&label=Mypy)](https://github.com/ticstyle/DynDNS/actions/workflows/pipeline.yml)
 ![Installs](https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=Known%20installs&url=https%3A%2F%2Fanalytics.home-assistant.io%2Fcustom_integrations.json&query=%24.dyndns.total)
 
-A custom integration to easily update your dynamic domains using DynDNS2-protocol using your Home Assistant instance with the help of HACS.
+A lightweight Home Assistant custom integration designed to keep your public dynamic IP addresses up to date using any provider supporting the standard **DynDNS2** protocol.
+
+### ✨ Features
+* **Full UI Setup:** Configure your domain, credentials, and update server directly through the Home Assistant UI via Config Flow.
+* **Native Reconfiguration:** Change your host credentials, server, or update parameters anytime using the integration cogwheel.
+* **Live Update Interval:** Control the background update frequency (in minutes) dynamically via a `number` entity directly from dashboards or automations.
+* **Manual Refresh Button:** Instantly force an IP update check on demand using the dedicated update button entity.
+* **Diagnostic Sensors:** Track system health with a dedicated problem binary sensor and a UTC timestamp sensor recording the exact time of the last successful update.
 
 To add this integration, please add the custom repository `https://github.com/ticstyle/DynDNS/` to HACS in your Home Assistant setup.
 
