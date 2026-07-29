@@ -79,22 +79,24 @@ class DynDNSUpdateIntervalNumber(
         )
 
     @property
-    def native_value(self) -> float:
-        """Return the current update interval in minutes."""
-        return float(
-            self._entry.data.get(CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL_MINUTES)
+    def native_value(self) -> int:
+        """Return the current update interval as an integer."""
+        return int(
+            self._entry.data.get(
+                CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL_MINUTES
+            )
         )
 
     async def async_set_native_value(self, value: float) -> None:
         """Set new update interval and reconfigure coordinator polling."""
         minutes = int(value)
 
-        # 1. Dynamically change the update interval of the running coordinator
+        # Update coordinator polling interval dynamically
         self.coordinator.update_interval = timedelta(minutes=minutes)
 
-        # 2. Persist the updated configuration entry data back to Home Assistant
+        # Persist entry data to disk
         new_data = {**self._entry.data, CONF_UPDATE_INTERVAL: minutes}
         self.hass.config_entries.async_update_entry(self._entry, data=new_data)
 
-        # 3. Notify HA that entity state updated
+        # Notify Home Assistant of updated state
         self.async_write_ha_state()
