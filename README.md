@@ -1,5 +1,9 @@
 # DynDNS
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ticstyle/DynDNS/main/custom_components/dyndns/brand/logo.png" alt="DynDNS Logo" width="800" />
+</p>
+
 ![Latest Release](https://img.shields.io/github/release/ticstyle/DynDNS?color=blue&label=Release)
 ![Last Updated](https://img.shields.io/github/last-commit/ticstyle/DynDNS?path=hacs.json&label=Maintained)
 ![Issues](https://img.shields.io/github/issues/ticstyle/DynDNS?color=orange&label=Issues)
