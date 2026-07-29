@@ -14,6 +14,7 @@ from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import DynDNSConfigEntry, DynDNSUpdateCoordinator
@@ -49,8 +50,10 @@ async def async_setup_entry(
     )
 
 
-class DynDNSSensor(CoordinatorEntity[DynDNSUpdateCoordinator], SensorEntity):
-    """Representation of a DynDNS status sensor."""
+class DynDNSSensor(
+    CoordinatorEntity[DynDNSUpdateCoordinator], SensorEntity, RestoreEntity
+):
+    """Representation of a DynDNS status sensor with state restoration."""
 
     entity_description = MAIN_SENSOR_DESCRIPTION
     _attr_has_entity_name = True
@@ -71,6 +74,7 @@ class DynDNSSensor(CoordinatorEntity[DynDNSUpdateCoordinator], SensorEntity):
 
         self._attr_unique_id = f"{entry.entry_id}_status"
         self._attr_name = username
+        self._restored_state: str | None = None
 
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
@@ -79,10 +83,26 @@ class DynDNSSensor(CoordinatorEntity[DynDNSUpdateCoordinator], SensorEntity):
             model="DynDNS",
         )
 
+    async def async_added_to_hass(self) -> None:
+        """Handle entity restored state when added to Home Assistant."""
+        await super().async_added_to_hass()
+
+        last_state = await self.async_get_last_state()
+        if last_state is not None and last_state.state not in (
+            None,
+            "unknown",
+            "unavailable",
+        ):
+            self._restored_state = last_state.state
+            if self.coordinator.data is None:
+                self.coordinator.last_ip = last_state.state
+
     @property
     def native_value(self) -> str | None:
-        """Return the current IP address returned by the DynDNS update."""
-        return self.coordinator.data
+        """Return the current IP address or fall back to restored state."""
+        if self.coordinator.data is not None:
+            return self.coordinator.data
+        return self._restored_state
 
 
 class DynDNSLastSuccessSensor(CoordinatorEntity[DynDNSUpdateCoordinator], SensorEntity):
