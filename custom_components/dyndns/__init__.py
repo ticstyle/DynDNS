@@ -23,7 +23,6 @@ from .const import (
     CONF_UPDATE_INTERVAL,
     CONF_USERNAME,
     DEFAULT_UPDATE_INTERVAL_MINUTES,
-    DOMAIN,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -128,4 +127,3 @@ async def async_remove_config_entry_device(
 ) -> bool:
     """Remove a device and purge config entry if device is deleted from UI."""
     return True
-    
