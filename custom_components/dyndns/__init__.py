@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 import logging
 
 import aiohttp
@@ -13,6 +13,7 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.util import dt as dt_util
 
 from .const import (
     CONF_HOSTNAME,
@@ -25,7 +26,7 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BUTTON]
+PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BUTTON, Platform.BINARY_SENSOR]
 
 type DynDNSConfigEntry = ConfigEntry[DynDNSUpdateCoordinator]
 
@@ -46,6 +47,8 @@ class DynDNSUpdateCoordinator(DataUpdateCoordinator[str]):
         self.username: str = entry.data[CONF_USERNAME]
         self.password: str = entry.data[CONF_PASSWORD]
         self.last_ip: str | None = None
+        self.last_success_time: datetime | None = None
+        self.last_update_failed: bool = False
 
         super().__init__(
             hass,
@@ -72,21 +75,30 @@ class DynDNSUpdateCoordinator(DataUpdateCoordinator[str]):
                 text = (await response.text()).strip()
 
                 if response.status == 401 or "badauth" in text:
+                    self.last_update_failed = True
                     raise UpdateFailed("Authentication failed for DynDNS update")
 
-                # Parse standard DynDNS2 responses (good 1.2.3.4 or nochg 1.2.3.4)
                 parts = text.split()
                 if parts and parts[0] in ("good", "nochg") and len(parts) > 1:
                     self.last_ip = parts[1]
+                    self.last_success_time = dt_util.utcnow()
+                    self.last_update_failed = False
                     return parts[1]
 
-                # If IP wasn't returned in string, fallback to previous known IP or response
                 if self.last_ip:
+                    self.last_success_time = dt_util.utcnow()
+                    self.last_update_failed = False
                     return self.last_ip
 
+                self.last_success_time = dt_util.utcnow()
+                self.last_update_failed = False
                 return text
         except aiohttp.ClientError as err:
+            self.last_update_failed = True
             raise UpdateFailed(f"Error communicating with DynDNS server: {err}") from err
+        except Exception as err:
+            self.last_update_failed = True
+            raise UpdateFailed(f"Unexpected error: {err}") from err
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: DynDNSConfigEntry) -> bool:
