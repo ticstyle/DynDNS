@@ -25,7 +25,7 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS: list[Platform] = [Platform.SENSOR]
+PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BUTTON]
 
 type DynDNSConfigEntry = ConfigEntry[DynDNSUpdateCoordinator]
 
@@ -89,7 +89,8 @@ class DynDNSUpdateCoordinator(DataUpdateCoordinator[str]):
             raise UpdateFailed(f"Error communicating with DynDNS server: {err}") from err
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: DynDNSConfigEntry) -> bool:"""Set up DynDNS from a config entry."""
+async def async_setup_entry(hass: HomeAssistant, entry: DynDNSConfigEntry) -> bool:
+    """Set up DynDNS from a config entry."""
     coordinator = DynDNSUpdateCoordinator(hass, entry)
     await coordinator.async_config_entry_first_refresh()
 
@@ -102,4 +103,4 @@ async def async_setup_entry(hass: HomeAssistant, entry: DynDNSConfigEntry) -> bo
 async def async_unload_entry(hass: HomeAssistant, entry: DynDNSConfigEntry) -> bool:
     """Unload a config entry."""
     return await hass.config_entries.async_unload_entry(entry, PLATFORMS)
- 
+    
