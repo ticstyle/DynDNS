@@ -11,6 +11,7 @@ import aiohttp
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
@@ -115,4 +116,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: DynDNSConfigEntry) -> bo
 async def async_unload_entry(hass: HomeAssistant, entry: DynDNSConfigEntry) -> bool:
     """Unload a config entry."""
     return await hass.config_entries.async_unload_entry(entry, PLATFORMS)
+
+
+async def async_remove_config_entry_device(
+    hass: HomeAssistant, config_entry: DynDNSConfigEntry, device_entry: dr.DeviceEntry
+) -> bool:
+    """Remove a device and purge config entry if device is deleted from UI."""
+    return True
     
