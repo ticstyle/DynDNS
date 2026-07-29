@@ -3,10 +3,11 @@
 
 from __future__ import annotations
 
-import logging
 from datetime import datetime, timedelta
+import logging
 
 import aiohttp
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
@@ -99,9 +100,7 @@ class DynDNSUpdateCoordinator(DataUpdateCoordinator[str]):
                 return text
         except aiohttp.ClientError as err:
             self.last_update_failed = True
-            raise UpdateFailed(
-                f"Error communicating with DynDNS server: {err}"
-            ) from err
+            raise UpdateFailed(f"Error communicating with DynDNS server: {err}") from err
         except Exception as err:
             self.last_update_failed = True
             raise UpdateFailed(f"Unexpected error: {err}") from err
@@ -120,7 +119,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: DynDNSConfigEntry) -> bo
 
 async def async_unload_entry(hass: HomeAssistant, entry: DynDNSConfigEntry) -> bool:
     """Unload a config entry."""
-    return await hass.config_entries.async_unload_entry(entry, PLATFORMS)
+    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 
 async def async_remove_config_entry_device(
