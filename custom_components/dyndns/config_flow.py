@@ -16,8 +16,10 @@ from .const import (
     CONF_HOSTNAME,
     CONF_PASSWORD,
     CONF_SERVER,
+    CONF_UPDATE_INTERVAL,
     CONF_USERNAME,
     DEFAULT_SERVER,
+    DEFAULT_UPDATE_INTERVAL_MINUTES,
     DOMAIN,
 )
 
@@ -91,6 +93,7 @@ class DynDNSConfigFlow(ConfigFlow, domain=DOMAIN):
                         CONF_HOSTNAME: hostname,
                         CONF_USERNAME: user_input[CONF_USERNAME].strip(),
                         CONF_PASSWORD: user_input[CONF_PASSWORD].strip(),
+                        CONF_UPDATE_INTERVAL: user_input[CONF_UPDATE_INTERVAL],
                     },
                 )
 
@@ -100,6 +103,10 @@ class DynDNSConfigFlow(ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_HOSTNAME): str,
                 vol.Required(CONF_USERNAME): str,
                 vol.Required(CONF_PASSWORD): str,
+                vol.Required(
+                    CONF_UPDATE_INTERVAL,
+                    default=DEFAULT_UPDATE_INTERVAL_MINUTES,
+                ): vol.All(vol.Coerce(int), vol.Range(min=1, max=1440)),
             }
         )
 
@@ -127,6 +134,7 @@ class DynDNSConfigFlow(ConfigFlow, domain=DOMAIN):
                         CONF_HOSTNAME: hostname,
                         CONF_USERNAME: user_input[CONF_USERNAME].strip(),
                         CONF_PASSWORD: user_input[CONF_PASSWORD].strip(),
+                        CONF_UPDATE_INTERVAL: user_input[CONF_UPDATE_INTERVAL],
                     },
                 )
 
@@ -148,6 +156,12 @@ class DynDNSConfigFlow(ConfigFlow, domain=DOMAIN):
                     CONF_PASSWORD,
                     default=reconfig_entry.data.get(CONF_PASSWORD, ""),
                 ): str,
+                vol.Required(
+                    CONF_UPDATE_INTERVAL,
+                    default=reconfig_entry.data.get(
+                        CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL_MINUTES
+                    ),
+                ): vol.All(vol.Coerce(int), vol.Range(min=1, max=1440)),
             }
         )
 
