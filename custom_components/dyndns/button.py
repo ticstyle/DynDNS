@@ -63,4 +63,3 @@ class DynDNSUpdateButton(CoordinatorEntity[DynDNSUpdateCoordinator], ButtonEntit
     async def async_press(self) -> None:
         """Handle button press to trigger an update."""
         await self.coordinator.async_request_refresh()
-        

@@ -69,4 +69,3 @@ class DynDNSStatusBinarySensor(
     def is_on(self) -> bool:
         """Return true if the last update failed (Problem detected)."""
         return self.coordinator.last_update_failed
-        
