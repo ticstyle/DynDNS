@@ -3,8 +3,8 @@
   "name": "DynDNS",
   "codeowners": ["@ticstyle"],
   "config_flow": true,
-  "documentation": "https://github.com/ticstyle/DynDNS",
+  "documentation": "https://github.com/ticstyle/dyndns",
   "iot_class": "local_polling",
-  "issue_tracker": "https://github.com/ticstyle/DynDNS/issues",
+  "issue_tracker": "https://github.com/ticstyle/dyndns/issues",
   "version": "0.1.0-alpha"
 }
