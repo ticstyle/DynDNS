@@ -10,6 +10,16 @@
           "username": "Username / Login",
           "password": "Password / Token"
         }
+      },
+      "reconfigure": {
+        "title": "Reconfigure DynDNS Service",
+        "description": "Update your DynDNS2 provider credentials and settings.",
+        "data": {
+          "server": "Server Host / Address",
+          "hostname": "Domain / Hostname",
+          "username": "Username / Login",
+          "password": "Password / Token"
+        }
       }
     },
     "error": {
@@ -18,7 +28,8 @@
       "unknown": "Unexpected error occurred"
     },
     "abort": {
-      "already_configured": "This domain is already configured."
+      "already_configured": "This domain is already configured.",
+      "reconfigure_successful": "Reconfiguration successful."
     }
   }
 }
