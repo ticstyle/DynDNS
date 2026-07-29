@@ -56,11 +56,11 @@ class DynDNSUpdateButton(CoordinatorEntity[DynDNSUpdateCoordinator], ButtonEntit
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
             name=hostname,
-            manufacturer="DynDNS Provider",
-            model="DynDNS2 Protocol",
+            manufacturer="ticstyle",
+            model="DynDNS",
         )
 
     async def async_press(self) -> None:
         """Handle button press to trigger an update."""
         await self.coordinator.async_request_refresh()
-      
+        
