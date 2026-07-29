@@ -10,5 +10,5 @@ CONF_HOSTNAME: Final = "hostname"
 CONF_USERNAME: Final = "username"
 CONF_PASSWORD: Final = "password"
 
-DEFAULT_SERVER: Final = "test.domain.com"
+DEFAULT_SERVER: Final = "members.domain.org"
 UPDATE_INTERVAL_MINUTES: Final = 15
