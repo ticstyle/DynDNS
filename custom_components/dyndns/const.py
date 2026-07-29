@@ -11,5 +11,5 @@ CONF_USERNAME: Final = "username"
 CONF_PASSWORD: Final = "password"
 CONF_UPDATE_INTERVAL: Final = "update_interval"
 
-DEFAULT_SERVER: Final = "members.dyndns.org"
+DEFAULT_SERVER: Final = "cloud.test.org"
 DEFAULT_UPDATE_INTERVAL_MINUTES: Final = 15
