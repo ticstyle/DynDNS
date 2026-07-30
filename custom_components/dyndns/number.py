@@ -89,9 +89,7 @@ class DynDNSUpdateIntervalNumber(
     def native_value(self) -> int:
         """Return the current update interval as an integer."""
         return int(
-            self._entry.data.get(
-                CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL_MINUTES
-            )
+            self._entry.data.get(CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL_MINUTES)
         )
 
     async def async_set_native_value(self, value: float) -> None:
