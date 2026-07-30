@@ -3,10 +3,11 @@
 
 from __future__ import annotations
 
-import logging
 from datetime import datetime, timedelta
+import logging
 
 import aiohttp
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
@@ -18,10 +19,12 @@ from homeassistant.util import dt as dt_util
 from .const import (
     CONF_HOSTNAME,
     CONF_PASSWORD,
+    CONF_PROTOCOL,
     CONF_SERVER,
     CONF_UPDATE_INTERVAL,
     CONF_USERNAME,
     DEFAULT_UPDATE_INTERVAL_MINUTES,
+    PROTOCOL_DYNDNS2,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -47,6 +50,7 @@ class DynDNSUpdateCoordinator(DataUpdateCoordinator[str]):
         entry: DynDNSConfigEntry,
     ) -> None:
         """Initialize the update coordinator."""
+        self.protocol: str = entry.data.get(CONF_PROTOCOL, PROTOCOL_DYNDNS2)
         self.server: str = entry.data[CONF_SERVER]
         self.hostname: str = entry.data[CONF_HOSTNAME]
         self.username: str = entry.data[CONF_USERNAME]
@@ -67,6 +71,14 @@ class DynDNSUpdateCoordinator(DataUpdateCoordinator[str]):
         )
 
     async def _async_update_data(self) -> str:
+        """Perform protocol update call."""
+        if self.protocol == PROTOCOL_DYNDNS2:
+            return await self._async_update_dyndns2()
+
+        # Fallback default handling
+        return await self._async_update_dyndns2()
+
+    async def _async_update_dyndns2(self) -> str:
         """Perform DynDNS2 protocol update call."""
         session = async_get_clientsession(self.hass)
         url = f"https://{self.server}/nic/update"
@@ -104,9 +116,7 @@ class DynDNSUpdateCoordinator(DataUpdateCoordinator[str]):
                 return text
         except aiohttp.ClientError as err:
             self.last_update_failed = True
-            raise UpdateFailed(
-                f"Error communicating with DynDNS server: {err}"
-            ) from err
+            raise UpdateFailed(f"Error communicating with DynDNS server: {err}") from err
         except Exception as err:
             self.last_update_failed = True
             raise UpdateFailed(f"Unexpected error: {err}") from err
