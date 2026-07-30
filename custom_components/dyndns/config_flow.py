@@ -8,18 +8,28 @@ from typing import Any
 
 import aiohttp
 import voluptuous as vol
+
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.selector import (
+    SelectOptionDict,
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
+)
 
 from .const import (
     CONF_HOSTNAME,
     CONF_PASSWORD,
+    CONF_PROTOCOL,
     CONF_SERVER,
     CONF_UPDATE_INTERVAL,
     CONF_USERNAME,
     DEFAULT_SERVER,
     DEFAULT_UPDATE_INTERVAL_MINUTES,
     DOMAIN,
+    PROTOCOL_DYNDNS2,
+    SUPPORTED_PROTOCOLS,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -88,6 +98,7 @@ class DynDNSConfigFlow(ConfigFlow, domain=DOMAIN):
                 return self.async_create_entry(
                     title=hostname,
                     data={
+                        CONF_PROTOCOL: user_input[CONF_PROTOCOL],
                         CONF_SERVER: user_input[CONF_SERVER].strip(),
                         CONF_HOSTNAME: hostname,
                         CONF_USERNAME: user_input[CONF_USERNAME].strip(),
@@ -96,8 +107,20 @@ class DynDNSConfigFlow(ConfigFlow, domain=DOMAIN):
                     },
                 )
 
+        protocol_selector = SelectSelector(
+            SelectSelectorConfig(
+                options=[
+                    SelectOptionDict(value=proto, label=proto.upper())
+                    for proto in SUPPORTED_PROTOCOLS
+                ],
+                mode=SelectSelectorMode.DROPDOWN,
+                translation_key="protocol",
+            )
+        )
+
         step_user_data_schema = vol.Schema(
             {
+                vol.Required(CONF_PROTOCOL, default=PROTOCOL_DYNDNS2): protocol_selector,
                 vol.Required(CONF_SERVER, default=DEFAULT_SERVER): str,
                 vol.Required(CONF_HOSTNAME): str,
                 vol.Required(CONF_USERNAME): str,
@@ -129,6 +152,7 @@ class DynDNSConfigFlow(ConfigFlow, domain=DOMAIN):
                 return self.async_update_reload_and_abort(
                     reconfig_entry,
                     data={
+                        CONF_PROTOCOL: user_input[CONF_PROTOCOL],
                         CONF_SERVER: user_input[CONF_SERVER].strip(),
                         CONF_HOSTNAME: hostname,
                         CONF_USERNAME: user_input[CONF_USERNAME].strip(),
@@ -137,8 +161,25 @@ class DynDNSConfigFlow(ConfigFlow, domain=DOMAIN):
                     },
                 )
 
+        protocol_selector = SelectSelector(
+            SelectSelectorConfig(
+                options=[
+                    SelectOptionDict(value=proto, label=proto.upper())
+                    for proto in SUPPORTED_PROTOCOLS
+                ],
+                mode=SelectSelectorMode.DROPDOWN,
+                translation_key="protocol",
+            )
+        )
+
         reconfig_schema = vol.Schema(
             {
+                vol.Required(
+                    CONF_PROTOCOL,
+                    default=reconfig_entry.data.get(
+                        CONF_PROTOCOL, PROTOCOL_DYNDNS2
+                    ),
+                ): protocol_selector,
                 vol.Required(
                     CONF_SERVER,
                     default=reconfig_entry.data.get(CONF_SERVER, DEFAULT_SERVER),
