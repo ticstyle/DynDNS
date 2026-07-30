@@ -3,8 +3,9 @@
     "step": {
       "user": {
         "title": "Configure DynDNS Service",
-        "description": "Enter your DynDNS2 provider credentials and update settings.",
+        "description": "Select update protocol and enter your credentials.",
         "data": {
+          "protocol": "Protocol",
           "server": "Server Host / Address",
           "hostname": "Domain / Hostname",
           "username": "Username / Login",
@@ -14,8 +15,9 @@
       },
       "reconfigure": {
         "title": "Reconfigure DynDNS Service",
-        "description": "Update your DynDNS2 provider credentials and settings.",
+        "description": "Update your DynDNS provider credentials and settings.",
         "data": {
+          "protocol": "Protocol",
           "server": "Server Host / Address",
           "hostname": "Domain / Hostname",
           "username": "Username / Login",
@@ -32,6 +34,13 @@
     "abort": {
       "already_configured": "This domain is already configured.",
       "reconfigure_successful": "Reconfiguration successful."
+    }
+  },
+  "selector": {
+    "protocol": {
+      "options": {
+        "dyndns2": "DynDNS2"
+      }
     }
   }
 }
