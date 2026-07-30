@@ -17,14 +17,15 @@
 [![Mypy](https://img.shields.io/github/actions/workflow/status/ticstyle/DynDNS/pipeline.yml?branch=main&label=Mypy)](https://github.com/ticstyle/DynDNS/actions/workflows/pipeline.yml)
 ![Installs](https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=Known%20installs&url=https%3A%2F%2Fanalytics.home-assistant.io%2Fcustom_integrations.json&query=%24.dyndns.total)
 
-A lightweight Home Assistant custom integration designed to keep your public dynamic IP addresses up to date using any provider supporting the standard **DynDNS2** protocol.
+A lightweight, powerful Home Assistant custom integration designed to keep your dynamic IP addresses updated using standard **DynDNS2** (Basic Auth) or **Custom HTTP GET** (Token Auth) protocols.
 
 ### ✨ Features
-* **Full UI Setup:** Configure your domain, credentials, and update server directly through the Home Assistant UI via Config Flow.
-* **Native Reconfiguration:** Change your host credentials, server, or update parameters anytime using the integration cogwheel.
-* **Live Update Interval:** Control the background update frequency (in minutes) dynamically via a `number` entity directly from dashboards or automations.
-* **Manual Refresh Button:** Instantly force an IP update check on demand using the dedicated update button entity.
-* **Diagnostic Sensors:** Track system health with a dedicated problem binary sensor and a UTC timestamp sensor recording the exact time of the last successful update.
+* **Multi-Protocol Support:** Switch seamlessly between standard **DynDNS2** (`/nic/update` with HTTP Basic Auth) and **Custom HTTP GET** (`/api/dyndns/update` with token authentication).
+* **Full UI Setup & Reconfiguration:** Add domains, server addresses, credentials, and update intervals directly via Config Flow or reconfigure anytime using the integration cogwheel.
+* **Live Update Interval Control:** Control background update frequencies in minutes live using a dedicated `number` entity without needing to restart.
+* **Manual Refresh Button:** Force an instant IP update check on demand using the update button entity.
+* **State Persistence:** Entities restore their last known state across Home Assistant restarts and integration reloads.
+* **Diagnostic Sensors:** Track system health with a problem binary sensor and a UTC timestamp sensor recording the exact time of the last successful update.
 
 To add this integration, please add the custom repository `https://github.com/ticstyle/DynDNS/` to HACS in your Home Assistant setup.
 
