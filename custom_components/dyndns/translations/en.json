@@ -39,7 +39,8 @@
   "selector": {
     "protocol": {
       "options": {
-        "dyndns2": "DynDNS2"
+        "dyndns2": "DynDNS2 (Basic Auth)",
+        "http_get": "Custom HTTP GET (Token Auth)"
       }
     }
   }

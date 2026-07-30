@@ -28,6 +28,7 @@ from .const import (
     DEFAULT_UPDATE_INTERVAL_MINUTES,
     DOMAIN,
     PROTOCOL_DYNDNS2,
+    PROTOCOL_HTTP_GET,
     SUPPORTED_PROTOCOLS,
 )
 
@@ -42,37 +43,61 @@ class DynDNSConfigFlow(ConfigFlow, domain=DOMAIN):
     async def _async_validate_input(
         self, user_input: dict[str, Any]
     ) -> tuple[dict[str, str], str]:
-        """Validate user credentials against DynDNS server."""
+        """Validate user credentials against DynDNS server based on protocol."""
         errors: dict[str, str] = {}
         hostname = user_input[CONF_HOSTNAME].strip().lower()
 
         session = async_get_clientsession(self.hass)
+        protocol = user_input.get(CONF_PROTOCOL, PROTOCOL_DYNDNS2)
         server = user_input[CONF_SERVER].strip()
         username = user_input[CONF_USERNAME].strip()
         password = user_input[CONF_PASSWORD].strip()
 
-        url = f"https://{server}/nic/update"
-        params = {"hostname": hostname}
-        auth = aiohttp.BasicAuth(username, password)
-
         try:
-            async with session.get(
-                url,
-                params=params,
-                auth=auth,
-                headers={"User-Agent": "HomeAssistant-DynDNS/1.0"},
-                timeout=aiohttp.ClientTimeout(total=10),
-            ) as response:
-                if response.status == 401:
-                    errors["base"] = "invalid_auth"
-                elif response.status != 200:
-                    errors["base"] = "cannot_connect"
-                else:
-                    text = await response.text()
-                    if "badauth" in text:
+            if protocol == PROTOCOL_HTTP_GET:
+                # Custom HTTP GET endpoint (Token authenticated)
+                url = f"https://{server}/api/dyndns/update"
+                params = {
+                    "hostname": hostname,
+                    "token": password,
+                }
+                async with session.get(
+                    url,
+                    params=params,
+                    headers={"User-Agent": "HomeAssistant-DynDNS/1.0"},
+                    timeout=aiohttp.ClientTimeout(total=10),
+                ) as response:
+                    if response.status in (401, 403):
                         errors["base"] = "invalid_auth"
-                    elif "nohost" in text or "notfqdn" in text:
+                    elif response.status != 200:
                         errors["base"] = "cannot_connect"
+                    else:
+                        text = await response.text()
+                        if "badauth" in text or "invalid" in text.lower():
+                            errors["base"] = "invalid_auth"
+            else:
+                # Standard DynDNS2 endpoint (Basic Auth)
+                url = f"https://{server}/nic/update"
+                params = {"hostname": hostname}
+                auth = aiohttp.BasicAuth(username, password)
+
+                async with session.get(
+                    url,
+                    params=params,
+                    auth=auth,
+                    headers={"User-Agent": "HomeAssistant-DynDNS/1.0"},
+                    timeout=aiohttp.ClientTimeout(total=10),
+                ) as response:
+                    if response.status == 401:
+                        errors["base"] = "invalid_auth"
+                    elif response.status != 200:
+                        errors["base"] = "cannot_connect"
+                    else:
+                        text = await response.text()
+                        if "badauth" in text:
+                            errors["base"] = "invalid_auth"
+                        elif "nohost" in text or "notfqdn" in text:
+                            errors["base"] = "cannot_connect"
         except (aiohttp.ClientError, TimeoutError):
             errors["base"] = "cannot_connect"
         except Exception:  # pylint: disable=broad-except

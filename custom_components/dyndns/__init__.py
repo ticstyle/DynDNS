@@ -24,6 +24,7 @@ from .const import (
     CONF_USERNAME,
     DEFAULT_UPDATE_INTERVAL_MINUTES,
     PROTOCOL_DYNDNS2,
+    PROTOCOL_HTTP_GET,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -71,10 +72,9 @@ class DynDNSUpdateCoordinator(DataUpdateCoordinator[str]):
 
     async def _async_update_data(self) -> str:
         """Perform protocol update call."""
-        if self.protocol == PROTOCOL_DYNDNS2:
-            return await self._async_update_dyndns2()
+        if self.protocol == PROTOCOL_HTTP_GET:
+            return await self._async_update_http_get()
 
-        # Fallback default handling
         return await self._async_update_dyndns2()
 
     async def _async_update_dyndns2(self) -> str:
@@ -117,6 +117,55 @@ class DynDNSUpdateCoordinator(DataUpdateCoordinator[str]):
             self.last_update_failed = True
             raise UpdateFailed(
                 f"Error communicating with DynDNS server: {err}"
+            ) from err
+        except Exception as err:
+            self.last_update_failed = True
+            raise UpdateFailed(f"Unexpected error: {err}") from err
+
+    async def _async_update_http_get(self) -> str:
+        """Perform custom HTTP GET token-authenticated update call."""
+        session = async_get_clientsession(self.hass)
+        url = f"https://{self.server}/api/dyndns/update"
+        params = {
+            "hostname": self.hostname,
+            "token": self.password,
+        }
+
+        try:
+            async with session.get(
+                url,
+                params=params,
+                headers={"User-Agent": "HomeAssistant-DynDNS/1.0"},
+                timeout=aiohttp.ClientTimeout(total=15),
+            ) as response:
+                text = (await response.text()).strip()
+
+                if response.status in (401, 403) or "badauth" in text.lower():
+                    self.last_update_failed = True
+                    raise UpdateFailed("Authentication token rejected by server")
+
+                if response.status != 200:
+                    self.last_update_failed = True
+                    raise UpdateFailed(
+                        f"Server returned HTTP status code {response.status}"
+                    )
+
+                self.last_success_time = dt_util.utcnow()
+                self.last_update_failed = False
+
+                parts = text.split()
+                if parts and len(parts) > 1 and parts[0] in ("good", "nochg"):
+                    self.last_ip = parts[1]
+                    return parts[1]
+
+                if self.last_ip:
+                    return self.last_ip
+
+                return text
+        except aiohttp.ClientError as err:
+            self.last_update_failed = True
+            raise UpdateFailed(
+                f"Error communicating with HTTP GET server: {err}"
             ) from err
         except Exception as err:
             self.last_update_failed = True
