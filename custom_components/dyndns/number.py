@@ -19,9 +19,11 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from . import DynDNSConfigEntry, DynDNSUpdateCoordinator
 from .const import (
     CONF_HOSTNAME,
+    CONF_PROTOCOL,
     CONF_UPDATE_INTERVAL,
     DEFAULT_UPDATE_INTERVAL_MINUTES,
     DOMAIN,
+    PROTOCOL_DYNDNS2,
 )
 
 NUMBER_DESCRIPTION = NumberEntityDescription(
@@ -65,17 +67,22 @@ class DynDNSUpdateIntervalNumber(
         self._entry = entry
 
         hostname: str = entry.data[CONF_HOSTNAME]
-        formatted_domain = hostname.lower().replace(".", "_").replace("-", "_")
+        protocol: str = entry.data.get(CONF_PROTOCOL, PROTOCOL_DYNDNS2)
 
-        self.entity_id = f"number.dyndns_update_interval_{formatted_domain}"
+        formatted_domain = hostname.lower().replace(".", "_").replace("-", "_")
+        formatted_proto = protocol.lower().replace("-", "_")
+
+        self.entity_id = (
+            f"number.dyndns_{formatted_proto}_update_interval_{formatted_domain}"
+        )
         self._attr_unique_id = f"{entry.entry_id}_update_interval"
         self._attr_name = "Update Interval"
 
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
-            name=hostname,
+            name=f"DynDNS ({hostname} - {protocol.upper()})",
             manufacturer="ticstyle",
-            model="DynDNS",
+            model=f"DynDNS ({protocol.upper()})",
         )
 
     @property

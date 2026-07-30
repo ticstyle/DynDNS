@@ -15,7 +15,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import DynDNSConfigEntry, DynDNSUpdateCoordinator
-from .const import CONF_HOSTNAME, DOMAIN
+from .const import CONF_HOSTNAME, CONF_PROTOCOL, DOMAIN, PROTOCOL_DYNDNS2
 
 STATUS_BINARY_SENSOR_DESCRIPTION = BinarySensorEntityDescription(
     key="update_status",
@@ -52,17 +52,22 @@ class DynDNSStatusBinarySensor(
         super().__init__(coordinator)
 
         hostname: str = entry.data[CONF_HOSTNAME]
-        formatted_domain = hostname.lower().replace(".", "_").replace("-", "_")
+        protocol: str = entry.data.get(CONF_PROTOCOL, PROTOCOL_DYNDNS2)
 
-        self.entity_id = f"binary_sensor.dyndns_status_{formatted_domain}"
+        formatted_domain = hostname.lower().replace(".", "_").replace("-", "_")
+        formatted_proto = protocol.lower().replace("-", "_")
+
+        self.entity_id = (
+            f"binary_sensor.dyndns_{formatted_proto}_status_{formatted_domain}"
+        )
         self._attr_unique_id = f"{entry.entry_id}_update_status"
         self._attr_name = "Update Failure Status"
 
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
-            name=hostname,
+            name=f"DynDNS ({hostname} - {protocol.upper()})",
             manufacturer="ticstyle",
-            model="DynDNS",
+            model=f"DynDNS ({protocol.upper()})",
         )
 
     @property
