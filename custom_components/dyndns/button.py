@@ -52,9 +52,7 @@ class DynDNSUpdateButton(CoordinatorEntity[DynDNSUpdateCoordinator], ButtonEntit
         formatted_domain = hostname.lower().replace(".", "_").replace("-", "_")
         formatted_proto = protocol.lower().replace("-", "_")
 
-        self.entity_id = (
-            f"button.dyndns_{formatted_proto}_update_{formatted_domain}"
-        )
+        self.entity_id = f"button.dyndns_{formatted_proto}_update_{formatted_domain}"
         self._attr_unique_id = f"{entry.entry_id}_update_now"
         self._attr_name = "Update Now"
 
