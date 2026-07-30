@@ -8,7 +8,6 @@ from typing import Any
 
 import aiohttp
 import voluptuous as vol
-
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
@@ -120,7 +119,9 @@ class DynDNSConfigFlow(ConfigFlow, domain=DOMAIN):
 
         step_user_data_schema = vol.Schema(
             {
-                vol.Required(CONF_PROTOCOL, default=PROTOCOL_DYNDNS2): protocol_selector,
+                vol.Required(
+                    CONF_PROTOCOL, default=PROTOCOL_DYNDNS2
+                ): protocol_selector,
                 vol.Required(CONF_SERVER, default=DEFAULT_SERVER): str,
                 vol.Required(CONF_HOSTNAME): str,
                 vol.Required(CONF_USERNAME): str,
@@ -176,9 +177,7 @@ class DynDNSConfigFlow(ConfigFlow, domain=DOMAIN):
             {
                 vol.Required(
                     CONF_PROTOCOL,
-                    default=reconfig_entry.data.get(
-                        CONF_PROTOCOL, PROTOCOL_DYNDNS2
-                    ),
+                    default=reconfig_entry.data.get(CONF_PROTOCOL, PROTOCOL_DYNDNS2),
                 ): protocol_selector,
                 vol.Required(
                     CONF_SERVER,
