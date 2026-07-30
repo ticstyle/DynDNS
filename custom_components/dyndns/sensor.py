@@ -18,7 +18,7 @@ from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import DynDNSConfigEntry, DynDNSUpdateCoordinator
-from .const import CONF_HOSTNAME, CONF_USERNAME, DOMAIN
+from .const import CONF_HOSTNAME, CONF_PROTOCOL, CONF_USERNAME, DOMAIN, PROTOCOL_DYNDNS2
 
 MAIN_SENSOR_DESCRIPTION = SensorEntityDescription(
     key="dyndns_status",
@@ -68,19 +68,21 @@ class DynDNSSensor(
 
         hostname: str = entry.data[CONF_HOSTNAME]
         username: str = entry.data[CONF_USERNAME]
+        protocol: str = entry.data.get(CONF_PROTOCOL, PROTOCOL_DYNDNS2)
 
         formatted_domain = hostname.lower().replace(".", "_").replace("-", "_")
-        self.entity_id = f"sensor.dyndns_{formatted_domain}"
+        formatted_proto = protocol.lower().replace("-", "_")
 
+        self.entity_id = f"sensor.dyndns_{formatted_proto}_{formatted_domain}"
         self._attr_unique_id = f"{entry.entry_id}_status"
         self._attr_name = username
         self._restored_state: str | None = None
 
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
-            name=hostname,
+            name=f"DynDNS ({hostname} - {protocol.upper()})",
             manufacturer="ticstyle",
-            model="DynDNS",
+            model=f"DynDNS ({protocol.upper()})",
         )
 
     async def async_added_to_hass(self) -> None:
@@ -105,7 +107,9 @@ class DynDNSSensor(
         return self._restored_state
 
 
-class DynDNSLastSuccessSensor(CoordinatorEntity[DynDNSUpdateCoordinator], SensorEntity):
+class DynDNSLastSuccessSensor(
+    CoordinatorEntity[DynDNSUpdateCoordinator], SensorEntity
+):
     """Representation of the last successful update timestamp sensor."""
 
     entity_description = TIMESTAMP_SENSOR_DESCRIPTION
@@ -120,17 +124,22 @@ class DynDNSLastSuccessSensor(CoordinatorEntity[DynDNSUpdateCoordinator], Sensor
         super().__init__(coordinator)
 
         hostname: str = entry.data[CONF_HOSTNAME]
-        formatted_domain = hostname.lower().replace(".", "_").replace("-", "_")
+        protocol: str = entry.data.get(CONF_PROTOCOL, PROTOCOL_DYNDNS2)
 
-        self.entity_id = f"sensor.dyndns_last_success_{formatted_domain}"
+        formatted_domain = hostname.lower().replace(".", "_").replace("-", "_")
+        formatted_proto = protocol.lower().replace("-", "_")
+
+        self.entity_id = (
+            f"sensor.dyndns_{formatted_proto}_last_success_{formatted_domain}"
+        )
         self._attr_unique_id = f"{entry.entry_id}_last_successful_update"
         self._attr_name = "Last Successful Update"
 
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
-            name=hostname,
+            name=f"DynDNS ({hostname} - {protocol.upper()})",
             manufacturer="ticstyle",
-            model="DynDNS",
+            model=f"DynDNS ({protocol.upper()})",
         )
 
     @property
