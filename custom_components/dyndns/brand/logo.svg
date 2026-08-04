@@ -75,5 +75,12 @@
         DynDNS2
       </text>
     </g>
+
+    <g transform="translate(490, 235)">
+      <rect width="178" height="28" rx="14" fill="#00E5FF" fill-opacity="0.12" stroke="#00E5FF" stroke-opacity="0.3" stroke-width="1" />
+      <text x="90" y="19" font-size="13" font-weight="700" fill="#00E5FF" text-anchor="middle" letter-spacing="1">
+        Custom HTTP GET
+      </text>
+    </g>
   </g>
 </svg>
