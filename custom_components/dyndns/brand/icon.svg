@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#111B24" />
+      <stop offset="100%" stop-color="#0A0F14" />
+    </linearGradient>
+
+    <!-- Cyan Accent Gradient -->
+    <linearGradient id="cyanAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E5FF" />
+      <stop offset="100%" stop-color="#0288D1" />
+    </linearGradient>
+
+    <!-- Ring Gradient -->
+    <linearGradient id="ringGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E5FF" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#03A9F4" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#00E5FF" stop-opacity="0.9" />
+    </linearGradient>
+  </defs>
+
+  <!-- Container Base -->
+  <rect width="512" height="512" rx="110" fill="url(#bgGlow)" />
+  <rect width="504" height="504" x="4" y="4" rx="106" fill="none" stroke="#00E5FF" stroke-width="2" stroke-opacity="0.15" />
+
+  <!-- Globe / Network Grid -->
+  <g stroke="#03A9F4" stroke-opacity="0.25" stroke-width="4" fill="none">
+    <circle cx="256" cy="256" r="140" />
+    <ellipse cx="256" cy="256" rx="140" ry="55" />
+    <line x1="256" y1="116" x2="256" y2="396" />
+    <line x1="116" y1="256" x2="396" y2="256" />
+  </g>
+
+  <!-- Sync Ring (DynDNS Concept) -->
+  <path d="M 256,96 A 160,160 0 1,1 106,210" fill="none" stroke="url(#ringGlow)" stroke-width="18" stroke-linecap="round" />
+
+  <!-- Dynamic Refresh Arrowheads -->
+  <path d="M 256,66 L 256,126 L 306,96 Z" fill="url(#cyanAccent)" />
+  <path d="M 125,180 L 87,225 L 70,170 Z" fill="url(#cyanAccent)" />
+
+  <!-- Central IP / DNS Node -->
+  <circle cx="256" cy="256" r="32" fill="#0A0F14" stroke="#00E5FF" stroke-width="6" />
+  <circle cx="256" cy="256" r="14" fill="url(#cyanAccent)" />
+
+  <!-- Network Connection Nodes -->
+  <circle cx="160" cy="205" r="8" fill="#00E5FF" />
+  <circle cx="352" cy="307" r="8" fill="#00E5FF" />
+  <circle cx="370" cy="210" r="6" fill="#03A9F4" />
+</svg>
