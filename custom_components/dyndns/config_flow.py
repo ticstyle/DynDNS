@@ -154,9 +154,7 @@ class DynDNSConfigFlow(ConfigFlow, domain=DOMAIN):
                 probatio.Required(
                     CONF_UPDATE_INTERVAL,
                     default=DEFAULT_UPDATE_INTERVAL_MINUTES,
-                ): probatio.All(
-                    probatio.Coerce(int), probatio.Range(min=1, max=1440)
-                ),
+                ): probatio.All(probatio.Coerce(int), probatio.Range(min=1, max=1440)),
             }
         )
 
@@ -227,9 +225,7 @@ class DynDNSConfigFlow(ConfigFlow, domain=DOMAIN):
                     default=reconfig_entry.data.get(
                         CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL_MINUTES
                     ),
-                ): probatio.All(
-                    probatio.Coerce(int), probatio.Range(min=1, max=1440)
-                ),
+                ): probatio.All(probatio.Coerce(int), probatio.Range(min=1, max=1440)),
             }
         )
 
