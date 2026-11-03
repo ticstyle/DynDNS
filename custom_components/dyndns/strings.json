@@ -6,7 +6,7 @@
         "description": "Select update protocol and enter your credentials.",
         "data": {
           "protocol": "Protocol",
-          "server": "Server Host / Address (for example: cloud.test.org)",
+          "server": "Server Host / Address, for example cloud.test.org",
           "hostname": "Domain / Hostname",
           "username": "Username / Login",
           "password": "Password / Token",
@@ -18,7 +18,7 @@
         "description": "Update your DynDNS provider credentials and settings.",
         "data": {
           "protocol": "Protocol",
-          "server": "Server Host / Address (for example: cloud.test.org)",
+          "server": "Server Host / Address, for example cloud.test.org",
           "hostname": "Domain / Hostname",
           "username": "Username / Login",
           "password": "Password / Token",
