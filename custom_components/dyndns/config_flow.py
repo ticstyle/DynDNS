@@ -7,7 +7,7 @@ import logging
 from typing import Any
 
 import aiohttp
-import voluptuous as vol
+import probatio
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
@@ -142,19 +142,21 @@ class DynDNSConfigFlow(ConfigFlow, domain=DOMAIN):
             )
         )
 
-        step_user_data_schema = vol.Schema(
+        step_user_data_schema = probatio.Schema(
             {
-                vol.Required(
+                probatio.Required(
                     CONF_PROTOCOL, default=PROTOCOL_DYNDNS2
                 ): protocol_selector,
-                vol.Required(CONF_SERVER, default=DEFAULT_SERVER): str,
-                vol.Required(CONF_HOSTNAME): str,
-                vol.Required(CONF_USERNAME): str,
-                vol.Required(CONF_PASSWORD): str,
-                vol.Required(
+                probatio.Required(CONF_SERVER, default=DEFAULT_SERVER): str,
+                probatio.Required(CONF_HOSTNAME): str,
+                probatio.Required(CONF_USERNAME): str,
+                probatio.Required(CONF_PASSWORD): str,
+                probatio.Required(
                     CONF_UPDATE_INTERVAL,
                     default=DEFAULT_UPDATE_INTERVAL_MINUTES,
-                ): vol.All(vol.Coerce(int), vol.Range(min=1, max=1440)),
+                ): probatio.All(
+                    probatio.Coerce(int), probatio.Range(min=1, max=1440)
+                ),
             }
         )
 
@@ -198,34 +200,36 @@ class DynDNSConfigFlow(ConfigFlow, domain=DOMAIN):
             )
         )
 
-        reconfig_schema = vol.Schema(
+        reconfig_schema = probatio.Schema(
             {
-                vol.Required(
+                probatio.Required(
                     CONF_PROTOCOL,
                     default=reconfig_entry.data.get(CONF_PROTOCOL, PROTOCOL_DYNDNS2),
                 ): protocol_selector,
-                vol.Required(
+                probatio.Required(
                     CONF_SERVER,
                     default=reconfig_entry.data.get(CONF_SERVER, DEFAULT_SERVER),
                 ): str,
-                vol.Required(
+                probatio.Required(
                     CONF_HOSTNAME,
                     default=reconfig_entry.data.get(CONF_HOSTNAME, ""),
                 ): str,
-                vol.Required(
+                probatio.Required(
                     CONF_USERNAME,
                     default=reconfig_entry.data.get(CONF_USERNAME, ""),
                 ): str,
-                vol.Required(
+                probatio.Required(
                     CONF_PASSWORD,
                     default=reconfig_entry.data.get(CONF_PASSWORD, ""),
                 ): str,
-                vol.Required(
+                probatio.Required(
                     CONF_UPDATE_INTERVAL,
                     default=reconfig_entry.data.get(
                         CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL_MINUTES
                     ),
-                ): vol.All(vol.Coerce(int), vol.Range(min=1, max=1440)),
+                ): probatio.All(
+                    probatio.Coerce(int), probatio.Range(min=1, max=1440)
+                ),
             }
         )
 
